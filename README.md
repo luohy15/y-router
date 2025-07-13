@@ -1,6 +1,6 @@
 # y-router
 
-A Cloudflare Worker that translates between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter and other OpenAI-compatible providers.
+A Cloudflare Worker that acts as a **proxy service**, translating between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter, DeepSeek, and other OpenAI-compatible providers through a single proxy endpoint.
 
 ## Quick Usage
 
@@ -44,19 +44,22 @@ Example workflows:
 
 ## What it does
 
-y-router acts as a translation layer that:
+y-router acts as a **transparent proxy service** that:
 - Accepts requests in Anthropic's API format (`/v1/messages`)
 - Converts them to OpenAI's chat completions format
-- Forwards to OpenRouter (or any OpenAI-compatible API)
+- Forwards to the configured backend (OpenRouter, DeepSeek, or any OpenAI-compatible API)
 - Translates the response back to Anthropic's format
 - Supports both streaming and non-streaming responses
 
-## Perfect for Claude Code + OpenRouter
+**Key benefit:** Users only need to configure their Claude Code to point to the proxy - they don't need to know which backend provider is being used.
 
-This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's vast selection of models by:
-1. Pointing Claude Code to your y-router deployment
-2. Using your OpenRouter API key
-3. Accessing Claude models available on OpenRouter through Claude Code's interface
+## Perfect for Claude Code + Multiple Providers
+
+This proxy allows you to use [Claude Code](https://claude.ai/code) with various model providers by:
+1. Deploying y-router with your preferred backend (OpenRouter, DeepSeek, etc.)
+2. Pointing Claude Code to your y-router deployment
+3. Using your backend provider's API key
+4. Accessing models through Claude Code's interface transparently
 
 ## Setup
 
@@ -88,28 +91,37 @@ This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's v
 
 ## Using with DeepSeek
 
-y-router now supports DeepSeek's API as an alternative to OpenRouter:
+y-router supports DeepSeek's API as an alternative backend to OpenRouter. This is configured at **deployment time** by the service administrator.
+
+### For Service Administrators (Deployment Configuration)
+
+To deploy y-router with DeepSeek backend:
 
 1. **Get DeepSeek API key** from [platform.deepseek.com](https://platform.deepseek.com)
 
 2. **Deploy with DeepSeek configuration:**
    ```bash
+   # Configure the proxy to use DeepSeek as backend
    wrangler secret put DEEPSEEK_BASE_URL  # Set to: https://api.deepseek.com
+   wrangler deploy
    ```
 
-3. **Configure Claude Code for DeepSeek:**
-   ```bash
-   export ANTHROPIC_BASE_URL="https://cc.yovy.app"
-   export ANTHROPIC_API_KEY="your-deepseek-api-key"  # Use your DeepSeek API key here
-   ```
+### For End Users (Claude Code Configuration)
 
-**Note:** When using DeepSeek, set your DeepSeek API key as the `ANTHROPIC_API_KEY` value. The y-router will forward this key to DeepSeek's API with the proper Authorization header.
+Users interact with the proxy service the same way regardless of backend:
 
-**Available DeepSeek Models:**
-- `deepseek-chat` - General purpose chat model
+```bash
+# Point Claude Code to your deployed proxy
+export ANTHROPIC_BASE_URL="https://your-deployed-domain.com"  # or https://cc.yovy.app
+export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter key OR DeepSeek key (depends on deployment)
+```
+
+**Available Models Through DeepSeek Backend:**
+- `deepseek-chat` - General purpose chat model  
 - `deepseek-reasoner` - Advanced reasoning model
+- Claude model requests (haiku, sonnet, opus) automatically map to `deepseek-chat`
 
-Claude model requests (haiku, sonnet, opus) will automatically map to `deepseek-chat`.
+**Note:** Users don't need to know which backend (OpenRouter or DeepSeek) the proxy is configured to use. The proxy handles all translation transparently.
 
 ## API Usage
 

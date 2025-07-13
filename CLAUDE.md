@@ -11,7 +11,9 @@ npm run deploy # Deploy to Cloudflare Workers
 
 ## Project Architecture
 
-This is a Cloudflare Worker that acts as an API translation layer between Anthropic's Claude API format and OpenAI-compatible APIs (primarily OpenRouter and DeepSeek). The worker translates requests and responses bidirectionally to enable Claude Code compatibility with multiple model providers.
+This is a Cloudflare Worker that acts as a **transparent proxy service** between Anthropic's Claude API format and OpenAI-compatible APIs. The proxy enables Claude Code users to access multiple model providers (OpenRouter, DeepSeek, etc.) without changing their client configuration.
+
+**Key Concept:** Users only interact with the proxy endpoint - the backend provider selection is configured at deployment time by the service administrator.
 
 ### Core Components
 
