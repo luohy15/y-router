@@ -1,3 +1,5 @@
+import { Provider, PROVIDER_CONFIGS } from './types';
+
 interface MessageCreateParamsBase {
   model: string;
   messages: any[];
@@ -98,32 +100,26 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string, provider: 'openrouter' | 'deepseek' = 'openrouter'): string {
-  if (provider === 'deepseek') {
-    // For DeepSeek, we map all Claude models to DeepSeek models
-    if (anthropicModel.includes('haiku') || anthropicModel.includes('sonnet') || anthropicModel.includes('opus')) {
-      return 'deepseek-chat';
-    }
-    // If it's already a DeepSeek model, return as-is
-    if (anthropicModel.includes('deepseek')) {
-      return anthropicModel;
-    }
-    // Default to deepseek-chat for other models
-    return 'deepseek-chat';
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
+  const config = PROVIDER_CONFIGS[provider];
+  
+  // Check if it's already a valid provider-specific model
+  if (provider === 'deepseek' && config.validModels && config.validModels.includes(anthropicModel)) {
+    return anthropicModel;
   }
   
-  // Original OpenRouter mapping
-  if (anthropicModel.includes('haiku')) {
-    return 'anthropic/claude-3.5-haiku';
-  } else if (anthropicModel.includes('sonnet')) {
-    return 'anthropic/claude-sonnet-4';
-  } else if (anthropicModel.includes('opus')) {
-    return 'anthropic/claude-opus-4';
+  // Map Claude model names to provider-specific models
+  for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
+    if (anthropicModel.includes(claudeType)) {
+      return providerModel;
+    }
   }
+  
+  // Return original model name if no mapping found
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: 'openrouter' | 'deepseek' = 'openrouter'): any {
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter'): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)

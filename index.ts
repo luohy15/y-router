@@ -5,6 +5,23 @@ import { formatOpenAIToAnthropic } from './formatResponse';
 import { indexHtml } from './indexHtml';
 import { termsHtml } from './termsHtml';
 import { privacyHtml } from './privacyHtml';
+import { Provider, PROVIDER_CONFIGS } from './types';
+
+function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
+  // Priority: DeepSeek (if configured) > OpenRouter (default)
+  if (env.DEEPSEEK_BASE_URL) {
+    return {
+      provider: 'deepseek',
+      baseUrl: env.DEEPSEEK_BASE_URL
+    };
+  }
+  
+  // Default to OpenRouter
+  return {
+    provider: 'openrouter',
+    baseUrl: env.OPENROUTER_BASE_URL || PROVIDER_CONFIGS.openrouter.defaultBaseUrl
+  };
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -32,15 +49,8 @@ export default {
       const anthropicRequest = await request.json();
       const bearerToken = request.headers.get("x-api-key");
 
-      // Determine which provider to use based on environment variables
-      let provider: 'openrouter' | 'deepseek' = 'openrouter';
-      let baseUrl = env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
-      
-      // If DeepSeek base URL is configured, use DeepSeek
-      if (env.DEEPSEEK_BASE_URL) {
-        provider = 'deepseek';
-        baseUrl = env.DEEPSEEK_BASE_URL;
-      }
+      // Select provider and base URL based on environment configuration
+      const { provider, baseUrl } = selectProvider(env);
 
       const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
