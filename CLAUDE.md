@@ -20,20 +20,21 @@ This is a Cloudflare Worker that acts as an API translation layer between Anthro
 - **formatResponse.ts**: Converts OpenAI responses back to Anthropic format  
 - **streamResponse.ts**: Handles streaming response translation with proper SSE formatting
 - **env.ts**: TypeScript environment interface for Cloudflare Workers
+- **types.ts**: Centralized type definitions and provider configurations
 
 ### API Translation Flow
 
 1. Receives Anthropic-format requests at `/v1/messages`
-2. Determines target provider (OpenRouter or DeepSeek) based on `DEEPSEEK_BASE_URL` environment variable
-3. `formatAnthropicToOpenAI()` converts message structure with provider-specific model mapping
+2. Uses `selectProvider()` function to determine target provider based on environment configuration priority
+3. `formatAnthropicToOpenAI()` converts message structure with provider-specific model mapping from `PROVIDER_CONFIGS`
 4. Forwards to configured endpoint (OpenRouter or DeepSeek)
 5. For streaming: `streamOpenAIToAnthropic()` translates SSE events in real-time
 6. For non-streaming: `formatOpenAIToAnthropic()` converts the complete response
 
 ### Key Translation Logic
 
-- **Model mapping**: Maps Claude model names to provider-specific models in `formatRequest.ts:mapModel()` - supports both OpenRouter and DeepSeek
-- **Provider selection**: Automatically chooses DeepSeek if `DEEPSEEK_BASE_URL` is configured, otherwise defaults to OpenRouter
+- **Provider selection**: `selectProvider()` function prioritizes DeepSeek over OpenRouter when both are configured
+- **Model mapping**: Configuration-driven approach in `types.ts:PROVIDER_CONFIGS` with model validation for DeepSeek
 - **Tool call validation**: Ensures proper tool_calls/tool message pairing with `validateOpenAIToolCalls()`
 - **Message structure**: Handles complex content arrays, system messages, and role differences
 - **Streaming events**: Converts OpenAI delta format to Anthropic's content block events
