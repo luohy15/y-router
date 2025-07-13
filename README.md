@@ -81,7 +81,31 @@ This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's v
 
 ## Environment Variables
 
-- `OPENROUTER_BASE_URL` (optional): Base URL for the target API. Defaults to `https://openrouter.ai/api/v1`
+- `OPENROUTER_BASE_URL` (optional): Base URL for OpenRouter API. Defaults to `https://openrouter.ai/api/v1`
+- `DEEPSEEK_BASE_URL` (optional): Base URL for DeepSeek API. When set, routes requests to DeepSeek instead of OpenRouter. Set to `https://api.deepseek.com`
+
+## Using with DeepSeek
+
+y-router now supports DeepSeek's API as an alternative to OpenRouter:
+
+1. **Get DeepSeek API key** from [platform.deepseek.com](https://platform.deepseek.com)
+
+2. **Deploy with DeepSeek configuration:**
+   ```bash
+   wrangler secret put DEEPSEEK_BASE_URL  # Set to: https://api.deepseek.com
+   ```
+
+3. **Configure Claude Code for DeepSeek:**
+   ```bash
+   export ANTHROPIC_BASE_URL="https://cc.yovy.app"
+   export ANTHROPIC_API_KEY="your-deepseek-api-key"
+   ```
+
+**Available DeepSeek Models:**
+- `deepseek-chat` - General purpose chat model
+- `deepseek-reasoner` - Advanced reasoning model
+
+Claude model requests (haiku, sonnet, opus) will automatically map to `deepseek-chat`.
 
 ## API Usage
 

@@ -30,10 +30,19 @@ export default {
     
     if (url.pathname === '/v1/messages' && request.method === 'POST') {
       const anthropicRequest = await request.json();
-      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest);
       const bearerToken = request.headers.get("x-api-key");
 
-      const baseUrl = env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+      // Determine which provider to use based on environment variables
+      let provider: 'openrouter' | 'deepseek' = 'openrouter';
+      let baseUrl = env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+      
+      // If DeepSeek base URL is configured, use DeepSeek
+      if (env.DEEPSEEK_BASE_URL) {
+        provider = 'deepseek';
+        baseUrl = env.DEEPSEEK_BASE_URL;
+      }
+
+      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: {

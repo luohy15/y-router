@@ -98,7 +98,21 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string): string {
+export function mapModel(anthropicModel: string, provider: 'openrouter' | 'deepseek' = 'openrouter'): string {
+  if (provider === 'deepseek') {
+    // For DeepSeek, we map all Claude models to DeepSeek models
+    if (anthropicModel.includes('haiku') || anthropicModel.includes('sonnet') || anthropicModel.includes('opus')) {
+      return 'deepseek-chat';
+    }
+    // If it's already a DeepSeek model, return as-is
+    if (anthropicModel.includes('deepseek')) {
+      return anthropicModel;
+    }
+    // Default to deepseek-chat for other models
+    return 'deepseek-chat';
+  }
+  
+  // Original OpenRouter mapping
   if (anthropicModel.includes('haiku')) {
     return 'anthropic/claude-3.5-haiku';
   } else if (anthropicModel.includes('sonnet')) {
@@ -109,7 +123,7 @@ export function mapModel(anthropicModel: string): string {
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: 'openrouter' | 'deepseek' = 'openrouter'): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
@@ -213,7 +227,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
       }];
 
   const data: any = {
-    model: mapModel(model),
+    model: mapModel(model, provider),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,
