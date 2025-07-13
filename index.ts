@@ -8,11 +8,11 @@ import { privacyHtml } from './privacyHtml';
 import { Provider, PROVIDER_CONFIGS } from './types';
 
 function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
-  // Priority: DeepSeek (if configured) > OpenRouter (default)
-  if (env.DEEPSEEK_BASE_URL) {
+  // Priority: OpenAI-compatible (if configured) > OpenRouter (default)
+  if (env.OPENAI_COMPATIBLE_BASE_URL) {
     return {
-      provider: 'deepseek',
-      baseUrl: env.DEEPSEEK_BASE_URL
+      provider: 'openai-compatible',
+      baseUrl: env.OPENAI_COMPATIBLE_BASE_URL
     };
   }
   

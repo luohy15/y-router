@@ -103,8 +103,8 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
 export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
   const config = PROVIDER_CONFIGS[provider];
   
-  // Check if it's already a valid provider-specific model
-  if (provider === 'deepseek' && config.validModels && config.validModels.includes(anthropicModel)) {
+  // Check if it's already a valid OpenAI-compatible model
+  if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
     return anthropicModel;
   }
   

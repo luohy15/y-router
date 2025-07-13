@@ -1,4 +1,4 @@
-export type Provider = 'openrouter' | 'deepseek';
+export type Provider = 'openrouter' | 'openai-compatible';
 
 export interface ModelMapping {
   [key: string]: string;
@@ -13,13 +13,14 @@ export const PROVIDER_CONFIGS = {
       opus: 'anthropic/claude-opus-4',
     } as ModelMapping,
   },
-  deepseek: {
-    defaultBaseUrl: 'https://api.deepseek.com',
+  'openai-compatible': {
+    defaultBaseUrl: 'https://api.openai.com/v1', // Default to OpenAI, but typically overridden
     modelMappings: {
-      haiku: 'deepseek-chat',
-      sonnet: 'deepseek-chat', 
-      opus: 'deepseek-chat',
+      haiku: 'gpt-4o-mini',
+      sonnet: 'gpt-4o', 
+      opus: 'gpt-4o',
     } as ModelMapping,
-    validModels: ['deepseek-chat', 'deepseek-reasoner'],
+    // Common models for OpenAI-compatible providers (can include DeepSeek, OpenAI, etc.)
+    commonModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo', 'deepseek-chat', 'deepseek-reasoner'],
   },
 } as const;
