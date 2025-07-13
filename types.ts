@@ -14,7 +14,7 @@ export const PROVIDER_CONFIGS = {
     } as ModelMapping,
   },
   'openai-compatible': {
-    defaultBaseUrl: 'https://api.openai.com/v1',
+    defaultBaseUrl: 'https://api.deepseek.com', // 匹配默认的DeepSeek模型映射
     modelMappings: {
       // 默认映射到DeepSeek模型（因为这是最常用的OpenAI兼容API）
       haiku: 'deepseek-chat',

@@ -85,8 +85,8 @@ This proxy allows you to use [Claude Code](https://claude.ai/code) with various 
 ## Environment Variables
 
 - `OPENROUTER_BASE_URL` (optional): Base URL for OpenRouter API. Defaults to `https://openrouter.ai/api/v1`
-- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Examples:
-  - DeepSeek: `https://api.deepseek.com`
+- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Defaults to `https://api.deepseek.com` when using OpenAI-compatible mode. Examples:
+  - DeepSeek: `https://api.deepseek.com` (default)
   - OpenAI: `https://api.openai.com/v1` 
   - Other providers: Set to their OpenAI-compatible endpoint
 
@@ -106,9 +106,18 @@ To deploy y-router with an OpenAI-compatible backend:
    ```bash
    # Configure the proxy to use an OpenAI-compatible API as backend
    # Examples:
+   
+   # For DeepSeek (default models already configured):
    wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # DeepSeek: https://api.deepseek.com
-   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
-   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
+   
+   # For OpenAI (need custom model mappings):
+   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
+   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # {"haiku":"gpt-4o-mini","sonnet":"gpt-4o","opus":"gpt-4o"}
+   
+   # For other providers:
+   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
+   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # Custom mappings as needed
+   
    wrangler deploy
    ```
 
@@ -124,10 +133,11 @@ export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter, DeepSeek, OpenAI,
 
 ### Common OpenAI-Compatible Providers
 
-**DeepSeek Example:**
+**DeepSeek Example (Default Configuration):**
 - **Available Models**: `deepseek-chat`, `deepseek-reasoner`
-- **Base URL**: `https://api.deepseek.com`
-- **Claude model mapping**: haiku/sonnet/opus → `gpt-4o-mini`/`gpt-4o`/`gpt-4o`
+- **Base URL**: `https://api.deepseek.com` (default when using OpenAI-compatible mode)
+- **Claude model mapping**: haiku/sonnet → `deepseek-chat`, opus → `deepseek-reasoner`
+- **Configuration**: Only need to set `OPENAI_COMPATIBLE_BASE_URL`
 
 **OpenAI Example:**
 - **Available Models**: `gpt-4o`, `gpt-4o-mini`, `gpt-3.5-turbo`
