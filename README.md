@@ -1,6 +1,6 @@
 # y-router
 
-A Cloudflare Worker that translates between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter and other OpenAI-compatible providers.
+A Cloudflare Worker that acts as a **proxy service**, translating between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter, OpenAI, DeepSeek, and other OpenAI-style providers through a single proxy endpoint.
 
 ## Quick Usage
 
@@ -44,19 +44,22 @@ Example workflows:
 
 ## What it does
 
-y-router acts as a translation layer that:
+y-router acts as a **transparent proxy service** that:
 - Accepts requests in Anthropic's API format (`/v1/messages`)
 - Converts them to OpenAI's chat completions format
-- Forwards to OpenRouter (or any OpenAI-compatible API)
+- Forwards to the configured backend (OpenRouter, OpenAI, DeepSeek, or any OpenAI-compatible API)
 - Translates the response back to Anthropic's format
 - Supports both streaming and non-streaming responses
 
-## Perfect for Claude Code + OpenRouter
+**Key benefit:** Users only need to configure their Claude Code to point to the proxy - they don't need to know which backend provider is being used.
 
-This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's vast selection of models by:
-1. Pointing Claude Code to your y-router deployment
-2. Using your OpenRouter API key
-3. Accessing Claude models available on OpenRouter through Claude Code's interface
+## Perfect for Claude Code + Multiple Providers
+
+This proxy allows you to use [Claude Code](https://claude.ai/code) with various model providers by:
+1. Deploying y-router with your preferred backend (OpenRouter, OpenAI, DeepSeek, etc.)
+2. Pointing Claude Code to your y-router deployment
+3. Using your backend provider's API key
+4. Accessing models through Claude Code's interface transparently
 
 ## Setup
 
@@ -81,7 +84,57 @@ This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's v
 
 ## Environment Variables
 
-- `OPENROUTER_BASE_URL` (optional): Base URL for the target API. Defaults to `https://openrouter.ai/api/v1`
+- `OPENROUTER_BASE_URL` (optional): Base URL for OpenRouter API. Defaults to `https://openrouter.ai/api/v1`
+- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Examples:
+  - DeepSeek: `https://api.deepseek.com`
+  - OpenAI: `https://api.openai.com/v1` 
+  - Other providers: Set to their OpenAI-compatible endpoint
+
+**Provider Priority:** If both environment variables are configured, OpenAI-compatible takes priority over OpenRouter.
+
+## Using with OpenAI-Compatible APIs
+
+y-router supports any OpenAI-compatible API as an alternative backend to OpenRouter. This is configured at **deployment time** by the service administrator.
+
+### For Service Administrators (Deployment Configuration)
+
+To deploy y-router with an OpenAI-compatible backend:
+
+1. **Get API key** from your chosen provider (DeepSeek, OpenAI, etc.)
+
+2. **Deploy with OpenAI-compatible configuration:**
+   ```bash
+   # Configure the proxy to use an OpenAI-compatible API as backend
+   # Examples:
+   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # DeepSeek: https://api.deepseek.com
+   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
+   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
+   wrangler deploy
+   ```
+
+### For End Users (Claude Code Configuration)
+
+Users interact with the proxy service the same way regardless of backend:
+
+```bash
+# Point Claude Code to your deployed proxy
+export ANTHROPIC_BASE_URL="https://your-deployed-domain.com"  # or https://cc.yovy.app
+export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter, DeepSeek, OpenAI, or other provider key
+```
+
+### Common OpenAI-Compatible Providers
+
+**DeepSeek Example:**
+- **Available Models**: `deepseek-chat`, `deepseek-reasoner`
+- **Base URL**: `https://api.deepseek.com`
+- **Claude model mapping**: haiku/sonnet/opus → `gpt-4o-mini`/`gpt-4o`/`gpt-4o`
+
+**OpenAI Example:**
+- **Available Models**: `gpt-4o`, `gpt-4o-mini`, `gpt-3.5-turbo`
+- **Base URL**: `https://api.openai.com/v1`
+- **Claude model mapping**: haiku/sonnet/opus → `gpt-4o-mini`/`gpt-4o`/`gpt-4o`
+
+**Note:** Users don't need to know which backend the proxy is configured to use. The proxy handles all translation transparently.
 
 ## API Usage
 

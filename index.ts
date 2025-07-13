@@ -5,6 +5,23 @@ import { formatOpenAIToAnthropic } from './formatResponse';
 import { indexHtml } from './indexHtml';
 import { termsHtml } from './termsHtml';
 import { privacyHtml } from './privacyHtml';
+import { Provider, PROVIDER_CONFIGS } from './types';
+
+function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
+  // Priority: OpenAI-compatible (if configured) > OpenRouter (default)
+  if (env.OPENAI_COMPATIBLE_BASE_URL) {
+    return {
+      provider: 'openai-compatible',
+      baseUrl: env.OPENAI_COMPATIBLE_BASE_URL
+    };
+  }
+  
+  // Default to OpenRouter
+  return {
+    provider: 'openrouter',
+    baseUrl: env.OPENROUTER_BASE_URL || PROVIDER_CONFIGS.openrouter.defaultBaseUrl
+  };
+}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -30,10 +47,12 @@ export default {
     
     if (url.pathname === '/v1/messages' && request.method === 'POST') {
       const anthropicRequest = await request.json();
-      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest);
       const bearerToken = request.headers.get("x-api-key");
 
-      const baseUrl = env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+      // Select provider and base URL based on environment configuration
+      const { provider, baseUrl } = selectProvider(env);
+
+      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: {

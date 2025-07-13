@@ -1,3 +1,5 @@
+import { Provider, PROVIDER_CONFIGS } from './types';
+
 interface MessageCreateParamsBase {
   model: string;
   messages: any[];
@@ -98,18 +100,26 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string): string {
-  if (anthropicModel.includes('haiku')) {
-    return 'anthropic/claude-3.5-haiku';
-  } else if (anthropicModel.includes('sonnet')) {
-    return 'anthropic/claude-sonnet-4';
-  } else if (anthropicModel.includes('opus')) {
-    return 'anthropic/claude-opus-4';
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
+  const config = PROVIDER_CONFIGS[provider];
+  
+  // Check if it's already a valid OpenAI-compatible model
+  if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
+    return anthropicModel;
   }
+  
+  // Map Claude model names to provider-specific models
+  for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
+    if (anthropicModel.includes(claudeType)) {
+      return providerModel;
+    }
+  }
+  
+  // Return original model name if no mapping found
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter'): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
@@ -213,7 +223,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
       }];
 
   const data: any = {
-    model: mapModel(model),
+    model: mapModel(model, provider),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,
