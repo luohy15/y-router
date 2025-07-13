@@ -9,18 +9,19 @@ export const PROVIDER_CONFIGS = {
     defaultBaseUrl: 'https://openrouter.ai/api/v1',
     modelMappings: {
       haiku: 'anthropic/claude-3.5-haiku',
-      sonnet: 'anthropic/claude-sonnet-4',
-      opus: 'anthropic/claude-opus-4',
+      sonnet: 'anthropic/claude-3.5-sonnet',
+      opus: 'anthropic/claude-3-opus',
     } as ModelMapping,
   },
   'openai-compatible': {
-    defaultBaseUrl: 'https://api.openai.com/v1', // Default to OpenAI, but typically overridden
+    defaultBaseUrl: 'https://api.openai.com/v1',
     modelMappings: {
-      haiku: 'gpt-4o-mini',
-      sonnet: 'gpt-4o', 
-      opus: 'gpt-4o',
+      // 默认映射到DeepSeek模型（因为这是最常用的OpenAI兼容API）
+      haiku: 'deepseek-chat',
+      sonnet: 'deepseek-chat', 
+      opus: 'deepseek-reasoner', // 更复杂的任务使用reasoner模型
     } as ModelMapping,
-    // Common models for OpenAI-compatible providers (can include DeepSeek, OpenAI, etc.)
+    // 支持的模型列表
     commonModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo', 'deepseek-chat', 'deepseek-reasoner'],
   },
 } as const;

@@ -1,4 +1,5 @@
-import { Provider, PROVIDER_CONFIGS } from './types';
+import { Provider, PROVIDER_CONFIGS, ModelMapping } from './types';
+import { Env } from './env';
 
 interface MessageCreateParamsBase {
   model: string;
@@ -100,8 +101,21 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', env?: Env): string {
   const config = PROVIDER_CONFIGS[provider];
+  
+  // 获取模型映射配置
+  let modelMappings = config.modelMappings;
+  
+  // 如果是OpenAI兼容且配置了自定义映射，使用自定义映射
+  if (provider === 'openai-compatible' && env?.OPENAI_COMPATIBLE_MODEL_MAPPINGS) {
+    try {
+      const customMappings = JSON.parse(env.OPENAI_COMPATIBLE_MODEL_MAPPINGS);
+      modelMappings = { ...modelMappings, ...customMappings };
+    } catch (error) {
+      console.warn('Invalid OPENAI_COMPATIBLE_MODEL_MAPPINGS format, using defaults');
+    }
+  }
   
   // Check if it's already a valid OpenAI-compatible model
   if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
@@ -109,7 +123,7 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   }
   
   // Map Claude model names to provider-specific models
-  for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
+  for (const [claudeType, providerModel] of Object.entries(modelMappings)) {
     if (anthropicModel.includes(claudeType)) {
       return providerModel;
     }
@@ -119,7 +133,7 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter'): any {
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter', env?: Env): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
@@ -223,7 +237,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
       }];
 
   const data: any = {
-    model: mapModel(model, provider),
+    model: mapModel(model, provider, env),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,

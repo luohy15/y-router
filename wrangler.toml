@@ -2,7 +2,7 @@ name = "y-router"
 main = "index.ts"
 compatibility_date = "2025-05-30"
 routes = [
-  { pattern = "cc.yovy.app", custom_domain = true }
+  { pattern = "cc.xiaohui.cool", custom_domain = true }
 ]
 
 # Enable logging

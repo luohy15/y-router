@@ -52,7 +52,7 @@ export default {
       // Select provider and base URL based on environment configuration
       const { provider, baseUrl } = selectProvider(env);
 
-      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
+      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider, env);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: {
