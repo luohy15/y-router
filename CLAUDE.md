@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with the Claude-Code-Router repository.
 
 ## Development Commands
 
@@ -11,7 +11,7 @@ npm run deploy # Deploy to Cloudflare Workers
 
 ## Project Architecture
 
-This is a Cloudflare Worker that acts as a **transparent proxy service** between Anthropic's Claude API format and OpenAI-compatible APIs. The proxy enables Claude Code users to access multiple model providers (OpenRouter, OpenAI, DeepSeek, and other OpenAI-style APIs) without changing their client configuration.
+This is a Cloudflare Worker that acts as a **transparent proxy service** between Anthropic's Claude API format and OpenAI-compatible APIs. The Claude-Code-Router enables Claude Code users to access multiple model providers (OpenRouter, OpenAI, DeepSeek, Kimi, SiliconFlow, and other OpenAI-style APIs) without changing their client configuration.
 
 **Key Concept:** Users only interact with the proxy endpoint - the backend provider selection is configured at deployment time by the service administrator.
 
@@ -45,7 +45,7 @@ This is a Cloudflare Worker that acts as a **transparent proxy service** between
 
 - `OPENROUTER_BASE_URL`: OpenRouter API base URL (defaults to `https://openrouter.ai/api/v1`)
 - `OPENAI_COMPATIBLE_BASE_URL`: Any OpenAI-compatible API base URL (when set, routes to this endpoint instead of OpenRouter)
-- Custom domain configured: `cc.yovy.app`
+- Custom domain configured: `cc.xiaohui.cool`
 - Observability enabled for logging
 
 The worker includes static HTML pages for the homepage (`indexHtml.ts`), terms (`termsHtml.ts`), and privacy policy (`privacyHtml.ts`).

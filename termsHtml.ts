@@ -5,7 +5,7 @@ export const termsHtml = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - y-router</title>
+    <title>Terms of Service - Claude-Code-Router</title>
     <link rel="shortcut icon" type="image/svg+xml" href="${faviconDataUrl}">
     <style>
         * {
@@ -123,14 +123,14 @@ export const termsHtml = `<!DOCTYPE html>
         <div class="last-updated">Last updated: July 12, 2025</div>
 
         <div class="highlight">
-            <strong>Important:</strong> By using y-router (cc.yovy.app), you acknowledge that this is a third-party service not affiliated with Anthropic, OpenAI, or OpenRouter. You use this service at your own risk.
+            <strong>Important:</strong> By using Claude-Code-Router (cc.xiaohui.cool), you acknowledge that this is a third-party service not affiliated with Anthropic, OpenAI, or OpenRouter. You use this service at your own risk.
         </div>
 
         <h2>1. Service Description</h2>
-        <p>y-router is an API translation service that converts requests between Anthropic's Claude API format and OpenAI-compatible API formats. The service acts as a proxy to enable compatibility between different API standards.</p>
+        <p>Claude-Code-Router is an API translation service that converts requests between Anthropic's Claude API format and OpenAI-compatible API formats. The service acts as a proxy to enable compatibility between different API standards.</p>
 
         <h2>2. Acceptance of Terms</h2>
-        <p>By accessing or using y-router, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the service.</p>
+        <p>By accessing or using Claude-Code-Router, you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not use the service.</p>
 
         <h2>3. User Responsibilities</h2>
         <h3>3.1 API Key Management</h3>
@@ -149,7 +149,7 @@ export const termsHtml = `<!DOCTYPE html>
 
         <h2>4. Service Limitations</h2>
         <ul>
-            <li>y-router is provided "as is" without warranties of any kind</li>
+            <li>Claude-Code-Router is provided "as is" without warranties of any kind</li>
             <li>Service availability is not guaranteed</li>
             <li>We reserve the right to modify, suspend, or discontinue the service at any time</li>
             <li>Rate limits and usage restrictions may apply</li>
@@ -157,13 +157,13 @@ export const termsHtml = `<!DOCTYPE html>
 
         <h2>5. Data and Privacy</h2>
         <ul>
-            <li>y-router processes requests in real-time and does not intentionally store user data</li>
+            <li>Claude-Code-Router processes requests in real-time and does not intentionally store user data</li>
             <li>Requests are forwarded to third-party API providers according to their own privacy policies</li>
             <li>You should review the privacy policies of all connected services</li>
         </ul>
 
         <h2>6. Limitation of Liability</h2>
-        <p>y-router, its operators, and contributors shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use the service, including but not limited to:</p>
+        <p>Claude-Code-Router, its operators, and contributors shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use the service, including but not limited to:</p>
         <ul>
             <li>Data loss or corruption</li>
             <li>Service interruptions</li>
@@ -173,13 +173,13 @@ export const termsHtml = `<!DOCTYPE html>
         </ul>
 
         <h2>7. Indemnification</h2>
-        <p>You agree to indemnify and hold harmless y-router and its operators from any claims, damages, or expenses arising from your use of the service or violation of these terms.</p>
+        <p>You agree to indemnify and hold harmless Claude-Code-Router and its operators from any claims, damages, or expenses arising from your use of the service or violation of these terms.</p>
 
         <h2>8. Third-Party Services</h2>
-        <p>y-router integrates with third-party API services. Your use of these services through y-router is subject to their respective terms of service and privacy policies. We are not responsible for the actions, policies, or content of third-party services.</p>
+        <p>Claude-Code-Router integrates with third-party API services. Your use of these services through Claude-Code-Router is subject to their respective terms of service and privacy policies. We are not responsible for the actions, policies, or content of third-party services.</p>
 
         <h2>9. Intellectual Property</h2>
-        <p>y-router is open-source software. All trademarks, service marks, and logos used in connection with third-party services are the property of their respective owners.</p>
+        <p>Claude-Code-Router is open-source software. All trademarks, service marks, and logos used in connection with third-party services are the property of their respective owners.</p>
 
         <h2>10. Modifications to Terms</h2>
         <p>We reserve the right to modify these terms at any time. Continued use of the service after modifications constitutes acceptance of the updated terms.</p>
@@ -189,11 +189,11 @@ export const termsHtml = `<!DOCTYPE html>
 
         <div class="contact">
             <h3>Contact Information</h3>
-            <p>For questions about these Terms of Service, please contact us through the <a href="https://github.com/luohy15/y-router" target="_blank">GitHub repository</a>.</p>
+            <p>For questions about these Terms of Service, please contact us through the <a href="https://github.com/istarwyh/claude-code-router" target="_blank">GitHub repository</a>.</p>
         </div>
 
         <div class="footer">
-            <p>y-router is an independent, open-source project.<br>
+            <p>Claude-Code-Router is an independent, open-source project.<br>
             Not affiliated with Anthropic, OpenAI, or OpenRouter.</p>
         </div>
     </div>

@@ -105,24 +105,20 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   const config = PROVIDER_CONFIGS[provider];
   
   // 获取模型映射配置
-  let modelMappings = config.modelMappings;
+  const modelMappings = config.modelMappings;
   
-  // 如果是OpenAI兼容且配置了自定义映射，使用自定义映射
-  if (provider === 'openai-compatible' && env?.OPENAI_COMPATIBLE_MODEL_MAPPINGS) {
-    try {
-      const customMappings = JSON.parse(env.OPENAI_COMPATIBLE_MODEL_MAPPINGS);
-      modelMappings = { ...modelMappings, ...customMappings };
-    } catch (error) {
-      console.warn('Invalid OPENAI_COMPATIBLE_MODEL_MAPPINGS format, using defaults');
-    }
-  }
-  
-  // Check if it's already a valid OpenAI-compatible model
-  if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
+  // Check if it's already a valid model for this provider
+  if (config.commonModels && config.commonModels.includes(anthropicModel)) {
     return anthropicModel;
   }
   
   // Map Claude model names to provider-specific models
+  // Try exact mapping first
+  if (modelMappings[anthropicModel]) {
+    return modelMappings[anthropicModel];
+  }
+  
+  // Then try partial matching for model families
   for (const [claudeType, providerModel] of Object.entries(modelMappings)) {
     if (anthropicModel.includes(claudeType)) {
       return providerModel;

@@ -1,5 +1,5 @@
 {
-  "name": "y-router",
+  "name": "claude-code-router",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -9,5 +9,5 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": ""
+  "description": "Universal Claude API Proxy for Multiple AI Providers"
 }

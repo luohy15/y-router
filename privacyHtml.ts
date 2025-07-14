@@ -5,7 +5,7 @@ export const privacyHtml = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - y-router</title>
+    <title>Privacy Policy - Claude-Code-Router</title>
     <link rel="shortcut icon" type="image/svg+xml" href="${faviconDataUrl}">
     <style>
         * {
@@ -139,7 +139,7 @@ export const privacyHtml = `<!DOCTYPE html>
         <div class="last-updated">Last updated: July 12, 2025</div>
 
         <div class="highlight">
-            <strong>Privacy First:</strong> y-router is designed to be a transparent proxy that does not store your data. However, your requests are processed by third-party API providers with their own privacy policies.
+            <strong>Privacy First:</strong> Claude-Code-Router is designed to be a transparent proxy that does not store your data. However, your requests are processed by third-party API providers with their own privacy policies.
         </div>
 
         <h2>1. Information We Process</h2>
@@ -163,16 +163,16 @@ export const privacyHtml = `<!DOCTYPE html>
         <div class="data-flow">
             <h3>How Your Data Moves:</h3>
             <ol>
-                <li><strong>Your Application</strong> → sends request to y-router</li>
-                <li><strong>y-router</strong> → converts format and forwards to API provider (e.g., OpenRouter)</li>
+                <li><strong>Your Application</strong> → sends request to Claude-Code-Router</li>
+                <li><strong>Claude-Code-Router</strong> → converts format and forwards to API provider (e.g., OpenRouter)</li>
                 <li><strong>API Provider</strong> → processes request and returns response</li>
-                <li><strong>y-router</strong> → converts response format and returns to you</li>
+                <li><strong>Claude-Code-Router</strong> → converts response format and returns to you</li>
             </ol>
-            <p><em>y-router acts as a pass-through service and does not retain data.</em></p>
+            <p><em>Claude-Code-Router acts as a pass-through service and does not retain data.</em></p>
         </div>
 
         <h2>3. Third-Party Services</h2>
-        <p>When you use y-router, your data is processed by third-party API providers. These services have their own privacy policies:</p>
+        <p>When you use Claude-Code-Router, your data is processed by third-party API providers. These services have their own privacy policies:</p>
         <ul>
             <li><strong>OpenRouter:</strong> <a href="https://openrouter.ai/privacy" target="_blank">Privacy Policy</a></li>
             <li><strong>Anthropic:</strong> <a href="https://www.anthropic.com/privacy" target="_blank">Privacy Policy</a></li>
@@ -180,16 +180,16 @@ export const privacyHtml = `<!DOCTYPE html>
         </ul>
 
         <div class="warning">
-            <strong>Important:</strong> y-router cannot control how third-party API providers handle your data. Please review their privacy policies carefully.
+            <strong>Important:</strong> Claude-Code-Router cannot control how third-party API providers handle your data. Please review their privacy policies carefully.
         </div>
 
         <h2>4. Technical Implementation</h2>
         
         <h3>4.1 Cloudflare Workers</h3>
-        <p>y-router runs on Cloudflare Workers, which may temporarily process requests in memory during execution. Cloudflare's privacy practices apply to the infrastructure layer.</p>
+        <p>Claude-Code-Router runs on Cloudflare Workers, which may temporarily process requests in memory during execution. Cloudflare's privacy practices apply to the infrastructure layer.</p>
 
         <h3>4.2 No Persistent Storage</h3>
-        <p>y-router does not use databases or persistent storage for user data. All processing happens in real-time during request handling.</p>
+        <p>Claude-Code-Router does not use databases or persistent storage for user data. All processing happens in real-time during request handling.</p>
 
         <h3>4.3 Logging</h3>
         <p>Minimal operational logs may be kept temporarily for:</p>
@@ -203,7 +203,7 @@ export const privacyHtml = `<!DOCTYPE html>
         <h2>5. Your Rights and Choices</h2>
         
         <h3>5.1 Self-Hosting</h3>
-        <p>For maximum privacy control, you can deploy y-router yourself:</p>
+        <p>For maximum privacy control, you can deploy Claude-Code-Router yourself:</p>
         <ul>
             <li>Full control over your data processing</li>
             <li>No shared infrastructure</li>
@@ -235,16 +235,16 @@ export const privacyHtml = `<!DOCTYPE html>
         </ul>
 
         <h2>7. International Data Transfers</h2>
-        <p>y-router may process data in various geographic locations through Cloudflare's global network. Third-party API providers may also process data internationally according to their own policies.</p>
+        <p>Claude-Code-Router may process data in various geographic locations through Cloudflare's global network. Third-party API providers may also process data internationally according to their own policies.</p>
 
         <h2>8. Children's Privacy</h2>
-        <p>y-router is not intended for use by children under 13 years of age. We do not knowingly collect or process information from children.</p>
+        <p>Claude-Code-Router is not intended for use by children under 13 years of age. We do not knowingly collect or process information from children.</p>
 
         <h2>9. Changes to This Policy</h2>
         <p>We may update this privacy policy periodically. Material changes will be reflected by updating the "Last updated" date. Your continued use of the service constitutes acceptance of any changes.</p>
 
         <h2>10. Compliance and Transparency</h2>
-        <p>y-router is designed with privacy-by-design principles:</p>
+        <p>Claude-Code-Router is designed with privacy-by-design principles:</p>
         <ul>
             <li>Minimize data processing</li>
             <li>Open-source transparency</li>
@@ -256,14 +256,14 @@ export const privacyHtml = `<!DOCTYPE html>
             <h3>Contact Information</h3>
             <p>For privacy-related questions or concerns:</p>
             <ul>
-                <li>GitHub Issues: <a href="https://github.com/luohy15/y-router/issues" target="_blank">Report privacy concerns</a></li>
+                <li>GitHub Issues: <a href="https://github.com/istarwyh/claude-code-router/issues" target="_blank">Report privacy concerns</a></li>
                 <li>General inquiries: Through GitHub repository</li>
             </ul>
-            <p><strong>Data Subject Requests:</strong> Since y-router does not store personal data, most data subject requests should be directed to the relevant third-party API providers.</p>
+            <p><strong>Data Subject Requests:</strong> Since Claude-Code-Router does not store personal data, most data subject requests should be directed to the relevant third-party API providers.</p>
         </div>
 
         <div class="footer">
-            <p>y-router is an independent, open-source project.<br>
+            <p>Claude-Code-Router is an independent, open-source project.<br>
             Not affiliated with Anthropic, OpenAI, or OpenRouter.</p>
         </div>
     </div>
