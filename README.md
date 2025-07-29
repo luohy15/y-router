@@ -91,6 +91,22 @@ This allows you to use [Claude Code](https://claude.ai/code) with OpenRouter's v
 
 ## Setup
 
+### Option 1: Docker Deployment (Recommended for Local)
+
+1. **Clone and start with Docker:**
+   ```bash
+   git clone <repo>
+   cd y-router
+   docker-compose up -d
+   ```
+
+2. **Configure Claude Code:**
+   - Set API endpoint to `http://localhost:8787`
+   - Use your OpenRouter API key
+   - Enjoy access to Claude models via OpenRouter!
+
+### Option 2: Cloudflare Workers Deployment
+
 1. **Clone and deploy:**
    ```bash
    git clone <repo>
@@ -131,9 +147,71 @@ curl -X POST https://cc.yovy.app/v1/messages \
 
 ## Development
 
+### Local Development (Wrangler)
+
 ```bash
 npm run dev    # Start development server
 npm run deploy # Deploy to Cloudflare Workers
+```
+
+### Docker Deployment
+
+For easier deployment and development, you can use Docker:
+
+#### Quick Start with Docker Compose
+
+```bash
+# Clone the repository
+git clone <repo>
+cd y-router
+
+# Start with Docker Compose
+docker-compose up -d
+
+# The service will be available at http://localhost:8787
+```
+
+#### Manual Docker Build
+
+```bash
+# Build the Docker image
+docker build -t y-router .
+
+# Run the container
+docker run -d -p 8787:8787 \
+  -e OPENROUTER_BASE_URL=https://openrouter.ai/api/v1 \
+  y-router
+```
+
+#### Environment Configuration
+
+Create a `.env` file or set environment variables:
+
+```bash
+# Optional: Base URL for the target API (defaults to https://openrouter.ai/api/v1)
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+```
+
+#### Docker Compose Commands
+
+```bash
+docker-compose up -d        # Start services in background
+docker-compose down         # Stop and remove containers
+docker-compose logs         # View logs
+docker-compose ps           # Check service status
+docker-compose restart      # Restart services
+```
+
+#### Health Check
+
+The Docker setup includes a health check that verifies the service is responding:
+
+```bash
+# Check if the service is healthy
+curl http://localhost:8787/
+
+# Check Docker health status
+docker-compose ps
 ```
 
 ## Thanks
