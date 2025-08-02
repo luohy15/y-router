@@ -30,6 +30,7 @@ npm install -g @anthropic-ai/claude-code
 # For quick testing, you can use our shared instance. For daily use, deploy your own instance for better reliability.
 export ANTHROPIC_BASE_URL="https://cc.yovy.app"
 export ANTHROPIC_API_KEY="your-openrouter-api-key"
+export ANTHROPIC_CUSTOM_HEADERS="x-api-key: $ANTHROPIC_API_KEY"
 ```
 
 **Optional:** Configure specific models (browse models at [openrouter.ai/models](https://openrouter.ai/models)):
@@ -52,8 +53,8 @@ To maintain multiple Claude Code configurations for different providers or model
 
 ```bash
 # Example aliases for different configurations
-alias c1='ANTHROPIC_BASE_URL="https://cc.yovy.app" ANTHROPIC_API_KEY="your-openrouter-key" ANTHROPIC_MODEL="moonshotai/kimi-k2" ANTHROPIC_SMALL_FAST_MODEL="google/gemini-2.5-flash" claude'
-alias c2='ANTHROPIC_BASE_URL="https://api.moonshot.ai/anthropic/" ANTHROPIC_API_KEY="your-moonshot-key" ANTHROPIC_MODEL="kimi-k2-0711-preview" ANTHROPIC_SMALL_FAST_MODEL="moonshot-v1-8k" claude'
+alias c1='ANTHROPIC_BASE_URL="https://cc.yovy.app" ANTHROPIC_API_KEY="your-openrouter-key" ANTHROPIC_CUSTOM_HEADERS="x-api-key: $ANTHROPIC_API_KEY" ANTHROPIC_MODEL="moonshotai/kimi-k2" ANTHROPIC_SMALL_FAST_MODEL="google/gemini-2.5-flash" claude'
+alias c2='ANTHROPIC_BASE_URL="https://api.moonshot.ai/anthropic/" ANTHROPIC_API_KEY="your-moonshot-key" ANTHROPIC_CUSTOM_HEADERS="x-api-key: $ANTHROPIC_API_KEY" ANTHROPIC_MODEL="kimi-k2-0711-preview" ANTHROPIC_SMALL_FAST_MODEL="moonshot-v1-8k" claude'
 ```
 
 Add these aliases to your shell config file (`~/.bashrc` or `~/.zshrc`), then use `c1` or `c2` to switch between configurations.
