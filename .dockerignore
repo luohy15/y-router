@@ -10,3 +10,4 @@ coverage
 Dockerfile
 docker-compose.yml
 .dockerignore 
+.wrangler

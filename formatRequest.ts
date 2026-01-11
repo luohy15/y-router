@@ -5,6 +5,17 @@ interface MessageCreateParamsBase {
   temperature?: number;
   tools?: any[];
   stream?: boolean;
+  reasoning?: {
+    max_tokens?: number;
+    effort?: 'high' | 'medium' | 'low' | 'minimal' | 'none';
+    exclude?: boolean;
+    enabled?: boolean;
+  };
+  reasoning_effort?: string; // Keep for backward compatibility if needed, but reasoning.effort is preferred
+  thinking?: {
+    type: "enabled";
+    budget_tokens: number;
+  };
 }
 
 
@@ -114,8 +125,10 @@ export function mapModel(anthropicModel: string): string {
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
-  const { model, messages, system = [], temperature, tools, stream } = body;
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, modelOverride?: string): any {
+  const { model, messages, system = [], temperature, tools, stream, reasoning, reasoning_effort, thinking } = body;
+  
+  const targetModel = modelOverride || mapModel(model);
 
   const openAIMessages = Array.isArray(messages)
     ? messages.flatMap((anthropicMessage) => {
@@ -139,7 +152,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
           let textContent = "";
           const toolCalls: any[] = [];
 
-          anthropicMessage.content.forEach((contentPart) => {
+          anthropicMessage.content.forEach((contentPart: any) => {
             if (contentPart.type === "text") {
               textContent += (typeof contentPart.text === "string"
                 ? contentPart.text
@@ -170,7 +183,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
           let userTextMessageContent = "";
           const subsequentToolMessages: any[] = [];
 
-          anthropicMessage.content.forEach((contentPart) => {
+          anthropicMessage.content.forEach((contentPart: any) => {
             if (contentPart.type === "text") {
               userTextMessageContent += (typeof contentPart.text === "string"
                 ? contentPart.text
@@ -205,7 +218,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
           type: "text",
           text: item.text
         };
-        if (model.includes('claude')) {
+        if (targetModel.includes('claude')) {
           content.cache_control = {"type": "ephemeral"};
         }
         return {
@@ -218,16 +231,33 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase): any {
         content: [{
           type: "text",
           text: system,
-          ...(model.includes('claude') ? { cache_control: {"type": "ephemeral"} } : {})
+          ...(targetModel.includes('claude') ? { cache_control: {"type": "ephemeral"} } : {})
         }]
       }];
 
   const data: any = {
-    model: mapModel(model),
+    model: targetModel,
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,
   };
+
+  if (reasoning) {
+    data.reasoning = reasoning;
+  } else if (thinking && thinking.type === 'enabled') {
+    data.reasoning = {
+      max_tokens: thinking.budget_tokens
+    };
+  } else {
+    // Default to enabled and high effort if no reasoning/thinking provided
+    data.reasoning = {
+      effort: 'high'
+    };
+  }
+
+  if (reasoning_effort) {
+    data.reasoning_effort = reasoning_effort;
+  }
 
   if (tools) {
     data.tools = tools.map((item: any) => ({

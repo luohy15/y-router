@@ -80,7 +80,7 @@ echo ""
 case "$provider_choice" in
     1)
         provider="openrouter"
-        default_base_url="https://cc.yovy.app"
+        default_base_url="http://localhost:8787"
         api_key_url="https://openrouter.ai/keys"
         default_model_main="anthropic/claude-sonnet-4"
         default_model_small="anthropic/claude-3.5-haiku"
@@ -155,58 +155,63 @@ model_main=\${model_main:-$default_model_main}
 read -p "Small/fast model [$default_model_small]: " model_small
 model_small=\${model_small:-$default_model_small}
 
-# Detect current shell and determine rc file
-current_shell=$(basename "$SHELL")
-case "$current_shell" in
-    bash)
-        rc_file="$HOME/.bashrc"
-        ;;
-    zsh)
-        rc_file="$HOME/.zshrc"
-        ;;
-    fish)
-        rc_file="$HOME/.config/fish/config.fish"
-        ;;
-    *)
-        rc_file="$HOME/.profile"
-        ;;
-esac
-
-# Add environment variables to rc file
-echo ""
-echo "📝 Configuring environment variables in $rc_file..."
-
-# Create backup if file exists
-if [ -f "$rc_file" ]; then
-    cp "$rc_file" "\${rc_file}.backup.$(date +%Y%m%d_%H%M%S)"
+# Identify rc files to update
+rc_files=()
+if [ -f "$HOME/.bashrc" ]; then
+    rc_files+=("$HOME/.bashrc")
+fi
+if [ -f "$HOME/.zshrc" ]; then
+    rc_files+=("$HOME/.zshrc")
 fi
 
-# Remove existing Claude Code environment variables
-if [ -f "$rc_file" ]; then
-    # Use a temporary file to store content without Claude Code variables
-    grep -v "^# Claude Code environment variables\\|^export ANTHROPIC_BASE_URL\\|^export ANTHROPIC_API_KEY\\|^export ANTHROPIC_MODEL\\|^export ANTHROPIC_SMALL_FAST_MODEL" "$rc_file" > "\${rc_file}.tmp" || true
-    mv "\${rc_file}.tmp" "$rc_file"
+if [ \${#rc_files[@]} -eq 0 ]; then
+    # Fallback to profile if no rc files found
+    rc_files+=("$HOME/.profile")
 fi
 
-# Add new environment variables
-echo "" >> "$rc_file"
-echo "# Claude Code environment variables for $provider" >> "$rc_file"
-echo "export ANTHROPIC_BASE_URL=$base_url" >> "$rc_file"
-echo "export ANTHROPIC_API_KEY=$api_key" >> "$rc_file"
-echo "export ANTHROPIC_MODEL=$model_main" >> "$rc_file"
-echo "export ANTHROPIC_SMALL_FAST_MODEL=$model_small" >> "$rc_file"
-echo "✅ Environment variables configured in $rc_file"
+# Add environment variables to rc files
+for rc_file in "\${rc_files[@]}"; do
+    echo ""
+    echo "📝 Configuring environment variables in $rc_file..."
+
+    # Create backup if file exists
+    if [ -f "$rc_file" ]; then
+        cp "$rc_file" "\${rc_file}.backup.$(date +%Y%m%d_%H%M%S)"
+    fi
+
+    # Remove existing Claude Code environment variables
+    if [ -f "$rc_file" ]; then
+        # Use a temporary file to store content without Claude Code variables
+        grep -v "^# Claude Code environment variables\\|^export ANTHROPIC_BASE_URL\\|^export ANTHROPIC_API_KEY\\|^export ANTHROPIC_MODEL\\|^export ANTHROPIC_SMALL_FAST_MODEL" "$rc_file" > "\${rc_file}.tmp" || true
+        mv "\${rc_file}.tmp" "$rc_file"
+    fi
+
+    # Add new environment variables
+    echo "" >> "$rc_file"
+    echo "# Claude Code environment variables for $provider" >> "$rc_file"
+    echo "export ANTHROPIC_BASE_URL=$base_url" >> "$rc_file"
+    echo "export ANTHROPIC_API_KEY=$api_key" >> "$rc_file"
+    echo "export ANTHROPIC_MODEL=$model_main" >> "$rc_file"
+    echo "export ANTHROPIC_SMALL_FAST_MODEL=$model_small" >> "$rc_file"
+    echo "✅ Environment variables configured in $rc_file"
+done
 
 echo ""
 echo "🎉 Installation completed successfully!"
 echo ""
 echo "🔄 Please restart your terminal or run:"
-echo "   source $rc_file"
+if [[ " \${rc_files[*]} " =~ " $HOME/.zshrc " ]]; then
+    echo "   source ~/.zshrc"
+elif [[ " \${rc_files[*]} " =~ " $HOME/.bashrc " ]]; then
+    echo "   source ~/.bashrc"
+else
+    echo "   source \${rc_files[0]}"
+fi
 echo ""
 echo "🚀 Then you can start using Claude Code with:"
 echo "   claude"
 echo ""
 echo "💡 Tip: To maintain multiple configurations, use shell aliases:"
-echo "   alias c1='ANTHROPIC_BASE_URL=\\"https://cc.yovy.app\\" ANTHROPIC_API_KEY=\\"key1\\" ANTHROPIC_MODEL=\\"moonshotai/kimi-k2\\" ANTHROPIC_SMALL_FAST_MODEL=\\"google/gemini-2.5-flash\\" claude'"
+echo "   alias c1='ANTHROPIC_BASE_URL=\\"http://localhost:8787\\" ANTHROPIC_API_KEY=\\"key1\\" ANTHROPIC_MODEL=\\"moonshotai/kimi-k2\\" ANTHROPIC_SMALL_FAST_MODEL=\\"google/gemini-2.5-flash\\" claude'"
 echo "   alias c2='ANTHROPIC_BASE_URL=\\"https://api.moonshot.ai/anthropic/\\" ANTHROPIC_API_KEY=\\"key2\\" ANTHROPIC_MODEL=\\"kimi-k2-0711-preview\\" ANTHROPIC_SMALL_FAST_MODEL=\\"moonshot-v1-8k\\" claude'"
 `;

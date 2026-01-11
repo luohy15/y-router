@@ -1,6 +1,7 @@
 services:
-  y-router:
+  open-claude-router:
     build: .
+    user: "root"
     ports:
       - "8787:8787"
     environment:
@@ -8,6 +9,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
+    command: /bin/sh -lc "rm -rf /app/.wrangler/tmp || true; npm run dev -- --ip 0.0.0.0"
     stdin_open: true
     tty: true
     restart: unless-stopped

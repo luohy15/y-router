@@ -1,0 +1,25 @@
+
+> open-claude-router@1.0.0 dev
+> wrangler dev
+
+
+ ⛅️ wrangler 4.50.0
+───────────────────
+Using vars defined in .dev.vars
+Your Worker has access to the following bindings:
+Binding                                  Resource                  Mode
+env.MODEL_OVERRIDE ("(hidden)")          Environment Variable      local
+env.OPENROUTER_API_KEY ("(hidden)")      Environment Variable      local
+
+⎔ Starting local server...
+[wrangler:info] Ready on http://localhost:8787
+[wrangler:info] POST /v1/messages 200 OK (1030ms)
+[wrangler:info] POST /v1/messages 200 OK (1037ms)
+[wrangler:info] POST /v1/messages 200 OK (1651ms)
+[wrangler:info] POST /v1/messages 200 OK (779ms)
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mUncaught Error: Network connection lost. [0m
+
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mUncaught Error: Network connection lost. [0m
+
+

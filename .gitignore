@@ -173,3 +173,7 @@ dist
 
 .dev.vars
 .wrangler/
+.router.log
+.router.pid
+.serena/
+.gemini/

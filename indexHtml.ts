@@ -5,7 +5,7 @@ export const indexHtml = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Use Claude Code with OpenRouter</title>
+    <title>Open Claude Router (Local)</title>
     <link rel="shortcut icon" type="image/svg+xml" href="${faviconDataUrl}">
     <style>
         * {
@@ -24,7 +24,7 @@ export const indexHtml = `<!DOCTYPE html>
         }
 
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -94,6 +94,7 @@ export const indexHtml = `<!DOCTYPE html>
             overflow-x: auto;
             font-size: 0.9em;
             position: relative;
+            white-space: pre;
         }
 
         .code-block-wrapper {
@@ -124,20 +125,16 @@ export const indexHtml = `<!DOCTYPE html>
             background: #27ae60;
         }
 
-        .success {
-            background: linear-gradient(45deg, #27ae60, #2ecc71);
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
-            text-align: center;
-            margin: 30px 0;
+        .note {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            color: #1565c0;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.9em;
         }
-
-        .success h2 {
-            margin-bottom: 10px;
-            font-size: 1.5em;
-        }
-
+        
         .footer-links {
             text-align: center;
             padding: 20px;
@@ -155,86 +152,63 @@ export const indexHtml = `<!DOCTYPE html>
         .footer-links a:hover {
             color: #3498db;
         }
-
-        .note {
-            background: #e3f2fd;
-            border: 1px solid #bbdefb;
-            color: #1565c0;
-            padding: 12px;
-            border-radius: 6px;
-            margin: 10px 0;
-            font-size: 0.9em;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Claude Code + OpenRouter</h1>
-            <p>One-line install or 3 steps to get started</p>
+            <h1>🚀 Open Claude Router</h1>
+            <p>Local Proxy for Claude Code + OpenRouter</p>
         </div>
 
         <div class="content">
             <div class="step">
-                <h2><span class="step-number">⚡</span>One-line Install (Recommended)</h2>
+                <h2><span class="step-number">1</span>Installation</h2>
+                <p>Clone the repository and install dependencies:</p>
                 <div class="code-block-wrapper">
-                    <div class="code-block">bash -c "$(curl -fsSL https://cc.yovy.app/install.sh)"</div>
-                    <button class="copy-button" onclick="copyToClipboard(this, 'bash -c &quot;$(curl -fsSL https://cc.yovy.app/install.sh)&quot;')">Copy</button>
+                    <div class="code-block">git clone https://github.com/elusznik/open-claude-router.git
+cd open-claude-router
+npm install</div>
+                    <button class="copy-button" onclick="copyToClipboard(this, 'git clone https://github.com/elusznik/open-claude-router.git\\ncd open-claude-router\\nnpm install')">Copy</button>
                 </div>
-                <div class="note">This script will automatically install Node.js, Claude Code, and configure your environment with OpenRouter or Moonshot</div>
             </div>
 
             <div class="step">
-                <h2><span class="step-number">1</span>Manual: Install Claude Code</h2>
+                <h2><span class="step-number">2</span>Configuration</h2>
+                <p>Create a <code>.dev.vars</code> file in the project root:</p>
                 <div class="code-block-wrapper">
-                    <div class="code-block">npm install -g @anthropic-ai/claude-code</div>
-                    <button class="copy-button" onclick="copyToClipboard(this, 'npm install -g @anthropic-ai/claude-code')">Copy</button>
+                    <div class="code-block"># .dev.vars
+MODEL_OVERRIDE="x-ai/grok-4.1-fast"
+OPENROUTER_API_KEY="sk-or-..."</div>
+                    <button class="copy-button" onclick="copyToClipboard(this, 'MODEL_OVERRIDE=&quot;x-ai/grok-4.1-fast&quot;\\nOPENROUTER_API_KEY=&quot;sk-or-...&quot;')">Copy</button>
                 </div>
-                <div class="note">Or download from <a href="https://claude.ai/code" target="_blank">claude.ai/code</a></div>
             </div>
 
             <div class="step">
-                <h2><span class="step-number">2</span>Manual: Get OpenRouter API Key</h2>
-                <p>Sign up at <a href="https://openrouter.ai" target="_blank">openrouter.ai</a> and get your API key</p>
+                <h2><span class="step-number">3</span>Start Router</h2>
+                <p>Run the start script to launch the router and automatically configure Claude Code:</p>
+                <div class="code-block-wrapper">
+                    <div class="code-block">./start-detached.sh</div>
+                    <button class="copy-button" onclick="copyToClipboard(this, './start-detached.sh')">Copy</button>
+                </div>
+                <div class="note">This will backup your settings and point Claude Code to localhost.</div>
             </div>
 
             <div class="step">
-                <h2><span class="step-number">3</span>Manual: Configure</h2>
-                <p>Add these to your shell config (<code>~/.bashrc</code> or <code>~/.zshrc</code>):</p>
+                <h2><span class="step-number">4</span>Stop & Restore</h2>
+                <p>When finished, stop the router to restore your original settings:</p>
                 <div class="code-block-wrapper">
-                    <div class="code-block">export ANTHROPIC_BASE_URL="https://cc.yovy.app"<br>
-export ANTHROPIC_API_KEY="your-openrouter-api-key"</div>
-                    <button class="copy-button" onclick="copyToClipboard(this, 'export ANTHROPIC_BASE_URL=&quot;https://cc.yovy.app&quot;\\nexport ANTHROPIC_API_KEY=&quot;your-openrouter-api-key&quot;')">Copy</button>
+                    <div class="code-block">./stop-router.sh</div>
+                    <button class="copy-button" onclick="copyToClipboard(this, './stop-router.sh')">Copy</button>
                 </div>
-                <p><strong>Optional:</strong> Configure specific models (browse at <a href="https://openrouter.ai/models" target="_blank">openrouter.ai/models</a>):</p>
-                <div class="code-block-wrapper">
-                    <div class="code-block">export ANTHROPIC_MODEL="moonshotai/kimi-k2"<br>
-export ANTHROPIC_SMALL_FAST_MODEL="google/gemini-2.5-flash"</div>
-                    <button class="copy-button" onclick="copyToClipboard(this, 'export ANTHROPIC_MODEL=&quot;moonshotai/kimi-k2&quot;\\nexport ANTHROPIC_SMALL_FAST_MODEL=&quot;google/gemini-2.5-flash&quot;')">Copy</button>
-                </div>
-                <p>Then reload your shell:</p>
-                <div class="code-block-wrapper">
-                    <div class="code-block">source ~/.bashrc</div>
-                    <button class="copy-button" onclick="copyToClipboard(this, 'source ~/.bashrc')">Copy</button>
-                </div>
-            </div>
-
-            <div class="success">
-                <h2>🎉 Ready to go!</h2>
-                <p>Run <code>claude</code> in your terminal and enjoy access to Claude models</p>
-            </div>
-
-            <div class="note">
-                <p><strong>For data privacy:</strong> Consider <a href="https://github.com/luohy15/y-router?tab=readme-ov-file#setup" target="_blank">self-deploying y-router</a> to Cloudflare Workers instead of using this shared instance.</p>
+                <div class="note"><strong>Important:</strong> Always use this script to ensure your config is restored!</div>
             </div>
         </div>
 
         <div class="footer-links">
-            <a href="https://github.com/luohy15/y-router" target="_blank">y-router</a>
+            <a href="https://github.com/elusznik/open-claude-router" target="_blank">GitHub</a>
             <a href="https://openrouter.ai" target="_blank">OpenRouter</a>
             <a href="https://claude.ai/code" target="_blank">Claude Code</a>
-            <a href="https://yovy.app" target="_blank">Yovy Chat</a>
-            <br>
             <a href="/terms">Terms</a>
             <a href="/privacy">Privacy</a>
         </div>
@@ -251,24 +225,6 @@ export ANTHROPIC_SMALL_FAST_MODEL="google/gemini-2.5-flash"</div>
                 }, 2000);
             }).catch(function(err) {
                 console.error('Failed to copy: ', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.textContent = 'Copied!';
-                    button.classList.add('copied');
-                    setTimeout(function() {
-                        button.textContent = 'Copy';
-                        button.classList.remove('copied');
-                    }, 2000);
-                } catch (err) {
-                    console.error('Fallback: Oops, unable to copy', err);
-                }
-                document.body.removeChild(textArea);
             });
         }
     </script>

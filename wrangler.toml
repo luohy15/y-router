@@ -1,4 +1,4 @@
-name = "y-router"
+name = "open-claude-router"
 main = "index.ts"
 compatibility_date = "2025-05-30"
 routes = [

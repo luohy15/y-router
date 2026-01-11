@@ -34,11 +34,13 @@ export default {
         headers: { "Content-Type": "text/plain; charset=utf-8" }
       });
     }
+
+
     
     if (url.pathname === '/v1/messages' && request.method === 'POST') {
       const anthropicRequest = await request.json();
-      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest);
-      const bearerToken = request.headers.get("X-Api-Key") || 
+      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, env.MODEL_OVERRIDE);
+      const bearerToken = env.OPENROUTER_API_KEY || request.headers.get("X-Api-Key") || 
         request.headers.get("Authorization")?.replace("Bearer ", "");
 
       const baseUrl = env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
@@ -73,6 +75,36 @@ export default {
       }
     }
     
+    if (url.pathname === '/v1/messages/count_tokens' && request.method === 'POST') {
+      const body = await request.json();
+      // Simple estimation: ~4 chars per token. 
+      // This is not perfect but better than 404 and sufficient for context management.
+      // We count system prompt + messages content.
+      let charCount = 0;
+      
+      if (body.system) {
+        if (typeof body.system === 'string') charCount += body.system.length;
+        else if (Array.isArray(body.system)) {
+            charCount += body.system.reduce((acc: number, part: any) => acc + (part.text?.length || 0), 0);
+        }
+      }
+      
+      if (body.messages) {
+        for (const msg of body.messages) {
+          if (typeof msg.content === 'string') charCount += msg.content.length;
+          else if (Array.isArray(msg.content)) {
+            charCount += msg.content.reduce((acc: number, part: any) => acc + (part.text?.length || 0), 0);
+          }
+        }
+      }
+      
+      const input_tokens = Math.ceil(charCount / 4);
+      
+      return new Response(JSON.stringify({ input_tokens }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
     return new Response('Not Found', { status: 404 });
   }
 }

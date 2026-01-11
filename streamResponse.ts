@@ -19,16 +19,18 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
           model,
           stop_reason: null,
           stop_sequence: null,
-          usage: { input_tokens: 1, output_tokens: 1 },
+          usage: { input_tokens: 0, output_tokens: 0 },
         },
       };
       enqueueSSE(controller, "message_start", messageStart);
 
       let contentBlockIndex = 0;
       let hasStartedTextBlock = false;
+      let hasStartedThinkingBlock = false;
       let isToolUse = false;
       let currentToolCallId: string | null = null;
       let toolCallJsonMap = new Map<string, string>();
+      let usage: { prompt_tokens?: number; completion_tokens?: number } | undefined = undefined;
 
       const reader = openaiStream.getReader();
       const decoder = new TextDecoder();
@@ -48,6 +50,9 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
                   
                   try {
                     const parsed = JSON.parse(data);
+                    if (parsed.usage) {
+                      usage = parsed.usage;
+                    }
                     const delta = parsed.choices?.[0]?.delta;
                     if (delta) {
                       processStreamDelta(delta);
@@ -78,10 +83,14 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
               
               try {
                 const parsed = JSON.parse(data);
+                if (parsed.usage) {
+                  usage = parsed.usage;
+                }
                 const delta = parsed.choices?.[0]?.delta;
                 
-                if (!delta) continue;
-                processStreamDelta(delta);
+                if (delta) {
+                  processStreamDelta(delta);
+                }
               } catch (e) {
                 // Parse error
                 continue;
@@ -94,6 +103,9 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
       }
 
       function processStreamDelta(delta: any) {
+        if (delta.usage) {
+          usage = delta.usage;
+        }
 
         // Handle tool calls
         if (delta.tool_calls?.length > 0) {
@@ -102,7 +114,7 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
             const toolCallId = toolCall.id;
 
             if (toolCallId && toolCallId !== currentToolCallId) {
-              if (isToolUse || hasStartedTextBlock) {
+              if (isToolUse || hasStartedTextBlock || hasStartedThinkingBlock) {
                 enqueueSSE(controller, "content_block_stop", {
                   type: "content_block_stop",
                   index: contentBlockIndex,
@@ -111,6 +123,7 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
 
               isToolUse = true;
               hasStartedTextBlock = false; // Reset text block flag
+              hasStartedThinkingBlock = false; // Reset thinking block flag
               currentToolCallId = toolCallId;
               contentBlockIndex++;
               toolCallJsonMap.set(toolCallId, "");
@@ -143,13 +156,49 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
               });
             }
           }
+        } else if (delta.reasoning) {
+          // Handle reasoning/thinking
+          if (isToolUse || hasStartedTextBlock) {
+            enqueueSSE(controller, "content_block_stop", {
+              type: "content_block_stop",
+              index: contentBlockIndex,
+            });
+            isToolUse = false;
+            hasStartedTextBlock = false;
+            currentToolCallId = null;
+            contentBlockIndex++;
+          }
+
+          if (!hasStartedThinkingBlock) {
+            enqueueSSE(controller, "content_block_start", {
+              type: "content_block_start",
+              index: contentBlockIndex,
+              content_block: {
+                type: "thinking",
+                thinking: "",
+                signature: "openrouter-reasoning" // Placeholder
+              },
+            });
+            hasStartedThinkingBlock = true;
+          }
+
+          enqueueSSE(controller, "content_block_delta", {
+            type: "content_block_delta",
+            index: contentBlockIndex,
+            delta: {
+              type: "thinking_delta",
+              thinking: delta.reasoning,
+            },
+          });
+
         } else if (delta.content) {
-          if (isToolUse) {
+          if (isToolUse || hasStartedThinkingBlock) {
             enqueueSSE(controller, "content_block_stop", {
               type: "content_block_stop",
               index: contentBlockIndex,
             });
             isToolUse = false; // Reset tool use flag
+            hasStartedThinkingBlock = false; // Reset thinking block flag
             currentToolCallId = null;
             contentBlockIndex++; // Increment for new text block
           }
@@ -178,7 +227,7 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
       }
 
       // Close last content block
-      if (isToolUse || hasStartedTextBlock) {
+      if (isToolUse || hasStartedTextBlock || hasStartedThinkingBlock) {
         enqueueSSE(controller, "content_block_stop", {
           type: "content_block_stop",
           index: contentBlockIndex,
@@ -192,7 +241,10 @@ export function streamOpenAIToAnthropic(openaiStream: ReadableStream, model: str
           stop_reason: isToolUse ? "tool_use" : "end_turn",
           stop_sequence: null,
         },
-        usage: { input_tokens: 100, output_tokens: 150 },
+        usage: {
+          input_tokens: usage?.prompt_tokens || 0,
+          output_tokens: usage?.completion_tokens || 0,
+        },
       });
 
       enqueueSSE(controller, "message_stop", {
